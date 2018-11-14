@@ -1,6 +1,7 @@
 import signal
 import subprocess
 import os
+import time
 
 class Pylemon(object):
     def __init__(self):
@@ -24,8 +25,7 @@ class Pylemon(object):
                 'layout': 'right'
         }
 
-        self.lemon_pid = subprocess.Popen(['lemonbar', '-p', '&'], stdin=subprocess.PIPE)
-        self.lemon_pid = self.lemon_pid.pid
+        self.lemon_pipe = subprocess.Popen(['lemonbar', '-p', '-g', '1920x25+0+25'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '2'])
         self.run()
 
@@ -34,7 +34,7 @@ class Pylemon(object):
     def get_layout(self):
         return 'mylayout'
 
-    def refresh_user(self):
+    def refresh_user(self, *args, **kwargs):
         try:
             with open('/tmp/refresh', 'r') as t:
                 target = t.read().replace('\n','')
@@ -50,7 +50,8 @@ class Pylemon(object):
             self.states['layout'] = False
         self.refresh()
 
-    def refresh(self):
+    def refresh(self, *args, **kwargs):
+        print('refreshing')
         for key in self.states:
             if self.states[key] is False:
                 self.outputs[self.positions[key]][key] = self.functions[key]()
@@ -58,9 +59,9 @@ class Pylemon(object):
         left = '%{l}' + ''.join(self.outputs['left'])
         center = '%{c}' + ''.join(self.outputs['center'])
         right = '%{r}' + ''.join(self.outputs['right'])
-        assert False, str(self.lemon_pid)
-        with open(os.path.join('/proc', str(self.lemon_pid), 'fd', '1'), 'a') as stdin:
-            stdin.write('Hello there\n')
+        # self.lemon_pipe.stdin.write('Hello there'.encode('utf-8'))
+        self.lemon_pipe.stdin.write('{}'.format(str(time.time())).encode('utf-8'))
+        self.lemon_pipe.stdin.flush()
 
 
 

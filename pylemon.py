@@ -26,7 +26,7 @@ class Pylemon(object):
         }
 
         self.lemon_pipe = subprocess.Popen(['lemonbar', '-p', '-g', '1920x25+0+25'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '2'])
+        subprocess.Popen(['./pylemon_wakeup', '2'])
         self.run()
 
     def get_date(self):

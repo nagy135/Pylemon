@@ -12,10 +12,13 @@ class Pylemon(object):
     def get_layout(self):
         return 'mylayout'
     def refresh(self):
-        with open('/tmp/refresh', 'r') as t:
-            target = t.read().replace('\n','')
-        with open('/tmp/refresh', 'w') as t:
-            t.write('')
+        try:
+            with open('/tmp/refresh', 'r') as t:
+                target = t.read().replace('\n','')
+            with open('/tmp/refresh', 'w') as t:
+                t.write('')
+        except FileNotFoundError:
+            return
         if target == 'date':
             self.states['date'] = False
         for key in self.states:
@@ -24,3 +27,5 @@ class Pylemon(object):
         signal.signal(signal.SIGUSR1, refresh)
         while True:
             signal.pause()
+instance = Pylemon()
+instance.run()

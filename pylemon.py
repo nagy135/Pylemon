@@ -12,16 +12,19 @@ class Pylemon(object):
 
         self.states = {
                 'date': False,
+                'redshift': False,
                 'layout': False
         }
 
         self.functions = {
                 'date': self.get_date,
-                'layout': self.get_layout
+                'layout': self.get_layout,
+                'redshift': self.get_redshift
         }
 
         self.positions = {
                 'date': 'left',
+                'redshift': 'left',
                 'layout': 'right'
         }
 
@@ -33,6 +36,8 @@ class Pylemon(object):
         return 'mydate'
     def get_layout(self):
         return 'mylayout'
+    def get_redshift(self):
+        return 'myredshift'
 
     def refresh_user(self, *args, **kwargs):
         try:
@@ -56,11 +61,11 @@ class Pylemon(object):
             if self.states[key] is False:
                 self.outputs[self.positions[key]][key] = self.functions[key]()
                 self.states[key] = True
-        left = '%{l}' + ''.join(self.outputs['left'])
-        center = '%{c}' + ''.join(self.outputs['center'])
-        right = '%{r}' + ''.join(self.outputs['right'])
+        left = '%{l}' + ' | '.join(list(self.outputs['left'].values()))
+        center = '%{c}' + ' | '.join(list(self.outputs['center'].values()))
+        right = '%{r}' + ' | '.join(list(self.outputs['right'].values()))
         # self.lemon_pipe.stdin.write('Hello there'.encode('utf-8'))
-        self.lemon_pipe.stdin.write('{}'.format(str(time.time())).encode('utf-8'))
+        self.lemon_pipe.stdin.write('{}'.format(left + center + right).encode('utf-8'))
         self.lemon_pipe.stdin.flush()
 
 

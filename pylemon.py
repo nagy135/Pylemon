@@ -33,7 +33,7 @@ class Pylemon(object):
         self.run()
 
     def get_date(self):
-        return 'mydate'
+        return '{}'.format(str(time.time()))
     def get_layout(self):
         return 'mylayout'
     def get_redshift(self):
@@ -54,8 +54,12 @@ class Pylemon(object):
         if target == 'layout':
             self.states['layout'] = False
         self.refresh()
+    def refresh_timer(self, *args, **kwargs):
+        for key in self.states:
+            self.states[key] = False
+        self.refresh()
 
-    def refresh(self, *args, **kwargs):
+    def refresh(self):
         print('refreshing')
         for key in self.states:
             if self.states[key] is False:
@@ -71,7 +75,7 @@ class Pylemon(object):
 
 
     def run(self):
-        signal.signal(signal.SIGSEGV, self.refresh)
+        signal.signal(signal.SIGSEGV, self.refresh_timer)
         signal.signal(signal.SIGUSR1, self.refresh_user)
         # initial pain
         self.refresh()

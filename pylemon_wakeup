@@ -3,6 +3,6 @@
 if [[ $# -gt 0 ]]; then
     while true; do
         sleep $1
-        ./pylemon_signal 10
+        ./pylemon_signal 11
     done
 fi

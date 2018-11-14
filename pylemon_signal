@@ -1,0 +1,10 @@
+#!/bin/bash
+
+pid=$(ps aux | grep pylemon | grep python | awk '{ print $2 }')
+if [[ $# -gt 0 ]]; then
+    if [[ $1 -eq 11 ]]; then
+        kill -s SIGSEGV $pid
+    elif [[ $1 -eq 10 ]]; then
+        kill -s SIGUSR1 $pid
+    fi
+fi

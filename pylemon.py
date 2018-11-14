@@ -1,15 +1,5 @@
 import signal
 
-def eleven():
-    print('eleven')
-def ten():
-    print('ten')
-signal.signal(signal.SIGSEGV, eleven)
-signal.signal(signal.SIGUSR1, ten)
-
-while True:
-  signal.pause()
-
 class Pylemon(object):
     def __init__(self):
         self.data = list()

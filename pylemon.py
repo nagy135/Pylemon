@@ -1,5 +1,6 @@
 import signal
 import subprocess
+import os
 
 class Pylemon(object):
     def __init__(self):
@@ -23,6 +24,8 @@ class Pylemon(object):
                 'layout': 'right'
         }
 
+        self.lemon_pid = subprocess.Popen(['lemonbar', '-p', '&'], stdin=subprocess.PIPE)
+        self.lemon_pid = self.lemon_pid.pid
         subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '2'])
         self.run()
 
@@ -55,7 +58,9 @@ class Pylemon(object):
         left = '%{l}' + ''.join(self.outputs['left'])
         center = '%{c}' + ''.join(self.outputs['center'])
         right = '%{r}' + ''.join(self.outputs['right'])
-        subprocess.Popen(['echo', left, center, right], shell=True)
+        assert False, str(self.lemon_pid)
+        with open(os.path.join('/proc', str(self.lemon_pid), 'fd', '1'), 'a') as stdin:
+            stdin.write('Hello there\n')
 
 
 

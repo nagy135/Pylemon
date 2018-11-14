@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /home/infiniter/Code/Pylemon
+python pylemon.py

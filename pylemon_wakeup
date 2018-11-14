@@ -2,7 +2,14 @@
 
 if [[ $# -gt 0 ]]; then
     while true; do
-        sleep $1
-        ./pylemon_signal 11
+        running=$(ps -aux | grep -e 'python pylemon.py' | grep -v grep | wc -l)
+        if [[ $running -gt 0 ]]; then
+            sleep $1
+            /home/infiniter/Code/Pylemon/pylemon_signal 11
+        else
+            sleep 2
+            killall lemonbar
+            exit 0
+        fi
     done
 fi

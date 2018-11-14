@@ -1,0 +1,22 @@
+#!/bin/bash
+
+
+res=$(cat /tmp/workspaces | cut -d : -f 2-11 | tr ':' '\n')
+echo -ne " "
+for DESKTOP in $res
+do
+    name=$(echo $DESKTOP | sed 's/o//;s/f//;s/F//;s/O//')
+    if [[ "$DESKTOP" =~ ^[f,o].+$ ]]; then
+        if [[ $DESKTOP =~ ^f.+$ ]]; then
+            echo -ne "%{B#000000}"
+            echo -ne "%{F#b2d3d9}"
+        elif [[ $DESKTOP =~ ^o.+$ ]]; then
+            echo -ne "%{B#19a85b}"
+            echo -ne "%{F#0b0b0b}"
+        fi
+    elif [[ $DESKTOP =~ ^[F,O].+$ ]]; then
+        echo -ne "%{B#c22330}"
+        echo -ne "%{F#b2d3d9}"
+    fi
+    echo -ne " $name %{F-}%{B-} "
+done

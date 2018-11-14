@@ -1,0 +1,13 @@
+#!/bin/bash
+
+bspc subscribe | while read line; do
+    echo $line > /tmp/workspaces
+    running=$(ps -aux | grep -e 'python pylemon.py' | grep -v grep | wc -l)
+    if [[ $running -gt 0 ]]; then
+        echo $line > /tmp/workspaces
+        echo 'workspaces' > /tmp/refresh
+        ./pylemon_signal 10
+    else
+        exit 0
+    fi
+done

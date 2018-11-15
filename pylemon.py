@@ -10,13 +10,16 @@ class Pylemon(object):
         self.outputs['right'] = dict()
         self.outputs['center'] = dict()
         self.first = True
+        self.separator = '  %{F#c22330}•%{F-}  '
 
         # sets order of modules
         self.states = {
+                'torrent': False,
                 'volume': False,
-                'brightness': False,
                 'battery': False,
+                'brightness': False,
                 'redshift': False,
+                'wifi': False,
                 'layout': False,
                 'date': False,
                 'music': False,
@@ -24,6 +27,8 @@ class Pylemon(object):
         }
 
         self.functions = {
+                'torrent': self.get_torrent,
+                'wifi': self.get_wifi,
                 'volume': self.get_volume,
                 'brightness': self.get_brightness,
                 'battery': self.get_battery,
@@ -35,6 +40,8 @@ class Pylemon(object):
         }
 
         self.positions = {
+                'torrent': 'right',
+                'wifi': 'right',
                 'volume': 'right',
                 'brightness': 'right',
                 'battery': 'right',
@@ -45,8 +52,8 @@ class Pylemon(object):
                 'workspaces': 'center'
         }
 
-        self.lemon_pipe = subprocess.Popen(['lemonbar', '-p', '-f', 'Monaco-12', '-f', 'Awesome-13', '-B', '#000000', '-F', '#CCCCCC', '-g', '1920x25+0+0'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '2'])
+        self.lemon_pipe = subprocess.Popen(['lemonbar', '-p', '-f', 'Monaco-12', '-f', 'FontAwesome-13', '-B', '#000000', '-F', '#CCCCCC', '-g', '1920x25+0+0'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '3'])
         subprocess.Popen(['/home/infiniter/Code/Pylemon/subscribe_workspaces'])
         self.run()
 
@@ -74,7 +81,15 @@ class Pylemon(object):
     def get_volume(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/volume'], stdout=subprocess.PIPE)
         return result.stdout.decode()
+    def get_wifi(self):
+        result = subprocess.run(['/home/infiniter/Code/Pylemon/wifi'], stdout=subprocess.PIPE)
+        return result.stdout.decode()
+    def get_torrent(self):
+        result = subprocess.run(['/home/infiniter/Code/Pylemon/torrent'], stdout=subprocess.PIPE)
+        return result.stdout.decode()
 
+    def sigpipe(self, *args, **kwargs):
+        pass
 
     def refresh_user(self, *args, **kwargs):
         try:
@@ -111,9 +126,9 @@ class Pylemon(object):
             if self.states[key] is False:
                 self.outputs[self.positions[key]][key] = self.functions[key]()
                 self.states[key] = True
-        left = '%{l}' + ' | '.join(list(self.outputs['left'].values()))
-        center = '%{c}' + ' | '.join(list(self.outputs['center'].values()))
-        right = '%{r}' + ' | '.join(list(self.outputs['right'].values()))
+        left = '%{l}' + self.separator.join(list(self.outputs['left'].values()))
+        center = '%{c}' + self.separator.join(list(self.outputs['center'].values()))
+        right = '%{r}' + self.separator.join(list(self.outputs['right'].values()))
         self.lemon_pipe.stdin.write('{}'.format(left + center + right).encode())
         self.lemon_pipe.stdin.flush()
         if self.first:
@@ -125,6 +140,7 @@ class Pylemon(object):
     def run(self):
         signal.signal(signal.SIGSEGV, self.refresh_timer)
         signal.signal(signal.SIGUSR1, self.refresh_user)
+        signal.signal(signal.SIGPIPE, self.sigpipe)
         # initial pain
         self.refresh()
         while True:

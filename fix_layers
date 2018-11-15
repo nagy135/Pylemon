@@ -1,4 +1,0 @@
-#!/bin/bash
-
-xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$(xdo id -a bar)"
-xdo above -t "$(xdo id -a bar)" "$(xdo id -a stalonetray)"

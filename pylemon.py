@@ -56,7 +56,7 @@ class Pylemon(object):
                 'workspaces': 'center'
         }
 
-        self.lemon_pipe = subprocess.Popen(['lemonbar', '-p', '-f', 'Monaco-12', '-f', 'FontAwesome-13', '-B', '#000000', '-F', '#CCCCCC', '-g', '1920x25+0+0'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        self.lemonbar = subprocess.Popen(['lemonbar', '-p', '-f', 'Monaco-12', '-f', 'FontAwesome-13', '-B', '#000000', '-F', '#CCCCCC', '-g', '1920x25+0+0'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         wakeup = subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '5'])
         self.wakeup_pid = wakeup.pid
         sub_workspace = subprocess.Popen(['/home/infiniter/Code/Pylemon/subscribe_workspaces'])
@@ -97,9 +97,6 @@ class Pylemon(object):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/torrent'], stdout=subprocess.PIPE)
         return result.stdout.decode()
 
-    def sigpipe(self, *args, **kwargs):
-        pass
-
     def refresh_user(self, *args, **kwargs):
         try:
             with open('/tmp/refresh', 'r') as t:
@@ -138,19 +135,14 @@ class Pylemon(object):
         left = '%{l}' + self.separator.join(list(self.outputs['left'].values()))
         center = '%{c}' + self.separator.join(list(self.outputs['center'].values()))
         right = '%{r}' + self.separator.join(list(self.outputs['right'].values()))
-        self.lemon_pipe.stdin.write(' {} '.format(left + center + right).encode())
-        self.lemon_pipe.stdin.flush()
-        if self.first:
-            subprocess.Popen(['/home/infiniter/Code/Pylemon/fix_layers'])
-            self.first = False
-
-
+        self.lemonbar.stdin.write(' {} '.format(left + center + right).encode())
+        self.lemonbar.stdin.flush()
 
     def run(self):
         signal.signal(signal.SIGSEGV, self.refresh_timer)
         signal.signal(signal.SIGUSR1, self.refresh_user)
-        signal.signal(signal.SIGPIPE, self.sigpipe)
-        # initial pain
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        # initial paint
         self.refresh()
         while True:
             signal.pause()
@@ -159,6 +151,7 @@ class Pylemon(object):
         print('cleaning up child processes')
         subprocess.Popen(['pkill', '-f', 'pylemon_wakeup'])
         subprocess.Popen(['pkill', '-f', 'subscribe_workspaces'])
+        subprocess.Popen(['pkill', '-f', 'stalonetray'])
         subprocess.Popen(['killall', 'lemonbar'])
 
 if __name__ == '__main__':

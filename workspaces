@@ -8,7 +8,7 @@ do
     name=$(echo $DESKTOP | sed 's/o//;s/f//;s/F//;s/O//')
     if [[ "$DESKTOP" =~ ^[f,o].+$ ]]; then
         if [[ $DESKTOP =~ ^f.+$ ]]; then
-            echo -ne "%{B#000000}"
+            echo -ne "%{B#0b0b0b}"
             echo -ne "%{F#b2d3d9}"
         elif [[ $DESKTOP =~ ^o.+$ ]]; then
             echo -ne "%{B#000000}"
@@ -16,7 +16,7 @@ do
         fi
     elif [[ $DESKTOP =~ ^[F,O].+$ ]]; then
         echo -ne "%{B#c22330}"
-        echo -ne "%{F#b2d3d9}"
+        echo -ne "%{F#0b0b0b}"
     fi
     echo -ne " $name %{F-}%{B-} "
 done

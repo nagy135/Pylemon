@@ -17,7 +17,7 @@ total_time=$(echo $mpc_val_2 | awk -F "/" '{print $2}')
 total_min=$(echo $total_time | awk -F ":" '{print $1}')
 total_sec=$(echo $total_time | awk -F ":" '{print $2}')
 #
-percentage=$(python /home/infiniter/Code/lemonscripts/get_percentages.py $current_min $current_sec $total_min $total_sec)
+percentage=$(python /home/infiniter/Code/Pylemon/get_percentages.py $current_min $current_sec $total_min $total_sec)
 
 percentage=$(echo "$percentage%")
 

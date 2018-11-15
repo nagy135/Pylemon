@@ -1,10 +1,12 @@
 #!/bin/bash
 
-loads=($(mpstat -P ALL 1 1 | awk '/Average:/ && $2 ~ /[0-9]/ {print $3}' | tr ',' '.'))
-average=$( python -c "print(int(float('${loads[0]}') + float('${loads[1]}') + float('${loads[2]}') + float('${loads[3]}')))")
-average2="$average %"
-if [[ $average -gt 60 ]]; then
-    echo -e "%{F-$c22330}$average2%{F-} | "
+used=$(top -b -n 1 | grep Cpu | awk '{ print 100 - $9 }' | tr '\n' ' ' | awk '{ print $1 + $2 + $3 + $4}')
+used=$(($used*100/400))
+if [[ $used -lt 20 ]]; then
+    color="#19a85b"
+elif [[ $used -lt 55 ]]; then
+    color="#f9dc2b"
 else
-    echo -e "$average2 | "
+    color="#c22330"
 fi
+echo -en "%{F$color} $used%%{F-}"

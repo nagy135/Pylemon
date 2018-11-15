@@ -1,3 +1,4 @@
+import atexit
 import signal
 import subprocess
 import os
@@ -16,6 +17,7 @@ class Pylemon(object):
         self.states = {
                 'torrent': False,
                 'volume': False,
+                'cpu': False,
                 'battery': False,
                 'brightness': False,
                 'redshift': False,
@@ -31,6 +33,7 @@ class Pylemon(object):
                 'wifi': self.get_wifi,
                 'volume': self.get_volume,
                 'brightness': self.get_brightness,
+                'cpu': self.get_cpu,
                 'battery': self.get_battery,
                 'date': self.get_date,
                 'layout': self.get_layout,
@@ -44,6 +47,7 @@ class Pylemon(object):
                 'wifi': 'right',
                 'volume': 'right',
                 'brightness': 'right',
+                'cpu': 'right',
                 'battery': 'right',
                 'layout': 'right',
                 'date': 'right',
@@ -53,8 +57,10 @@ class Pylemon(object):
         }
 
         self.lemon_pipe = subprocess.Popen(['lemonbar', '-p', '-f', 'Monaco-12', '-f', 'FontAwesome-13', '-B', '#000000', '-F', '#CCCCCC', '-g', '1920x25+0+0'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '3'])
-        subprocess.Popen(['/home/infiniter/Code/Pylemon/subscribe_workspaces'])
+        wakeup = subprocess.Popen(['/home/infiniter/Code/Pylemon/pylemon_wakeup', '5'])
+        self.wakeup_pid = wakeup.pid
+        sub_workspace = subprocess.Popen(['/home/infiniter/Code/Pylemon/subscribe_workspaces'])
+        self.sub_workspace_pid  = sub_workspace.pid
         self.run()
 
     def get_date(self):
@@ -68,6 +74,9 @@ class Pylemon(object):
         return result.stdout.decode()
     def get_music(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/music'], stdout=subprocess.PIPE)
+        return result.stdout.decode()
+    def get_cpu(self):
+        result = subprocess.run(['/home/infiniter/Code/Pylemon/cpu'], stdout=subprocess.PIPE)
         return result.stdout.decode()
     def get_battery(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/battery'], stdout=subprocess.PIPE)
@@ -129,7 +138,7 @@ class Pylemon(object):
         left = '%{l}' + self.separator.join(list(self.outputs['left'].values()))
         center = '%{c}' + self.separator.join(list(self.outputs['center'].values()))
         right = '%{r}' + self.separator.join(list(self.outputs['right'].values()))
-        self.lemon_pipe.stdin.write('{}'.format(left + center + right).encode())
+        self.lemon_pipe.stdin.write(' {} '.format(left + center + right).encode())
         self.lemon_pipe.stdin.flush()
         if self.first:
             subprocess.Popen(['/home/infiniter/Code/Pylemon/fix_layers'])
@@ -145,5 +154,13 @@ class Pylemon(object):
         self.refresh()
         while True:
             signal.pause()
+
+    def kill_child_processes():
+        print('cleaning up child processes')
+        subprocess.Popen(['pkill', '-f', 'pylemon_wakeup'])
+        subprocess.Popen(['pkill', '-f', 'subscribe_workspaces'])
+        subprocess.Popen(['killall', 'lemonbar'])
+
 if __name__ == '__main__':
+    atexit.register(Pylemon.kill_child_processes)
     instance = Pylemon()

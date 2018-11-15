@@ -9,6 +9,7 @@ class Pylemon(object):
         self.outputs['left'] = dict()
         self.outputs['right'] = dict()
         self.outputs['center'] = dict()
+        self.first = True
 
         # sets order of modules
         self.states = {
@@ -51,28 +52,28 @@ class Pylemon(object):
 
     def get_date(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/date'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
     def get_layout(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/layout'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
     def get_redshift(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/redshift'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
     def get_music(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/music'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
     def get_battery(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/battery'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
     def get_brightness(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/brightness'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
     def get_workspaces(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/workspaces'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
     def get_volume(self):
         result = subprocess.run(['/home/infiniter/Code/Pylemon/volume'], stdout=subprocess.PIPE)
-        return result.stdout.decode('utf-8')
+        return result.stdout.decode()
 
 
     def refresh_user(self, *args, **kwargs):
@@ -113,8 +114,11 @@ class Pylemon(object):
         left = '%{l}' + ' | '.join(list(self.outputs['left'].values()))
         center = '%{c}' + ' | '.join(list(self.outputs['center'].values()))
         right = '%{r}' + ' | '.join(list(self.outputs['right'].values()))
-        self.lemon_pipe.stdin.write('{}'.format(left + center + right).encode('utf-8'))
+        self.lemon_pipe.stdin.write('{}'.format(left + center + right).encode())
         self.lemon_pipe.stdin.flush()
+        if self.first:
+            subprocess.Popen(['/home/infiniter/Code/Pylemon/fix_layers'])
+            self.first = False
 
 
 

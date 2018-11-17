@@ -137,6 +137,10 @@ class Pylemon(object):
         right = '%{r}' + self.separator.join([x for x in self.outputs['right'].values() if x != ''])
         self.lemonbar.stdin.write(' {} '.format(left + center + right).encode())
         self.lemonbar.stdin.flush()
+        if self.first:
+            os.system('xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$(xdo id -a bar)"')
+            os.system('xdo above -t "$(xdo id -a bar)" "$(xdo id -a stalonetray)"')
+            self.first = False
 
     def run(self):
         signal.signal(signal.SIGSEGV, self.refresh_timer)

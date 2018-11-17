@@ -70,10 +70,12 @@ esac
 
 res=$(volume | format)
 val=$(echo $res | sed 's/%//' )
-if [ $val -gt 50 ]; then
+if [ $val -gt 70 ]; then
   echo " $res"
-elif [ $val -gt 0 ]; then
+elif [ $val -gt 30 ]; then
   echo " $res"
+elif [ $val -gt 0 ]; then
+  echo " $res"
 else
   echo " MUTE"
 fi

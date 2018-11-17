@@ -132,9 +132,9 @@ class Pylemon(object):
             if self.states[key] is False:
                 self.outputs[self.positions[key]][key] = self.functions[key]()
                 self.states[key] = True
-        left = '%{l}' + self.separator.join(list(self.outputs['left'].values()))
-        center = '%{c}' + self.separator.join(list(self.outputs['center'].values()))
-        right = '%{r}' + self.separator.join(list(self.outputs['right'].values()))
+        left = '%{l}' + self.separator.join([x for x in self.outputs['left'].values() if x != ''])
+        center = '%{c}' + self.separator.join([x for x in self.outputs['center'].values() if x != ''])
+        right = '%{r}' + self.separator.join([x for x in self.outputs['right'].values() if x != ''])
         self.lemonbar.stdin.write(' {} '.format(left + center + right).encode())
         self.lemonbar.stdin.flush()
 

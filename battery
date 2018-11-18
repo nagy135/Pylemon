@@ -19,6 +19,7 @@ my $color;
 my $acpi;
 my $acpi_charging;
 my $status;
+my $charging;
 my $percent;
 my $full_text;
 my $short_text;
@@ -82,12 +83,14 @@ open (ACPI2, "acpi -V | grep 'Adapter' | awk '{print \$3}' | tr -d '\n' |") or d
 $acpi_charging = <ACPI2>;
 close(ACPI2);
 
-if ($status eq 'Charging' | $acpi_charging eq 'on-line') {
+$charging = 0;
+if ( ($status eq 'Charging' | $acpi_charging eq 'on-line') && $percent != 100) {
+    $charging = 1;
     $full_text = ' ' . $full_text;
 }
 
 # consider color and urgent flag only on discharge
-if ($status eq 'Discharging') {
+if ($status eq 'Discharging' || $charging == 0) {
     $max_red = "#c22330";
     $max_green = "#19a85b";
     $max_red_r = hex(substr $max_red, 1, 2);

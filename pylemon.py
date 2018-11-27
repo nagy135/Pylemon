@@ -61,6 +61,8 @@ class Pylemon(object):
         self.wakeup_pid = wakeup.pid
         sub_workspace = subprocess.Popen(['/home/infiniter/Code/Pylemon/subscribe_workspaces'])
         self.sub_workspace_pid  = sub_workspace.pid
+        stalonetray = subprocess.Popen(['stalonetray' ,'--geometry', '10x1+550+0', '--grow-gravity', 'W', '--icon-gravity', 'E', '-bg', '#000000', '--max-geometry', '10x1'])
+        self.stalonetray_pid  = stalonetray.pid
         self.run()
 
     def get_date(self):
@@ -119,8 +121,12 @@ class Pylemon(object):
             self.states['layout'] = False
         elif target == 'workspaces':
             self.states['workspaces'] = False
+        elif target == 'cpu':
+            self.states['cpu'] = False
         elif target == 'volume':
             self.states['volume'] = False
+        elif target == 'torrent':
+            self.states['torrent'] = False
         self.refresh()
     def refresh_timer(self, *args, **kwargs):
         for key in self.states:

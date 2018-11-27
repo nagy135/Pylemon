@@ -25,11 +25,11 @@ wait_block=""
 
 waiter=""
 if [[ $idle_count -gt 0 ]]; then
-    wait_block=" ($idle_count)  "
+    wait_block=" ($idle_count) "
 fi
 seeder=""
 if [[ $seed_count -gt 0 ]]; then
-    seed_block="   ($seed_count)"
+    seed_block=" ($seed_count)"
 fi
 
 
@@ -42,7 +42,7 @@ if [[ $count -gt 0 ]]; then
 
     res=$(echo $(($done*100/$goal))'%')
     if [[ $(($count1 + $count2)) -gt 0 ]]; then
-        down_block="$res_line "
+        down_block="$res_line"
     else
         if [[ $seed_count -gt 0 ]]; then
             seed_block=" ($seed_count)"
@@ -54,7 +54,9 @@ if [[ $count -gt 0 ]]; then
 fi
 
 res=$(echo -e "$wait_block$down_block$seed_block")
-if [[ $seed_running_count -gt 0 ]]; then
+if [[ $(($count1 + $count2)) -gt 0 ]]; then
+    echo -en "%{F#19a85b}$res%{F-}"
+elif [[ $seed_running_count -gt 0 ]]; then
     echo -en "%{F#f9dc2b}$res%{F-}"
 else
     echo -en $res

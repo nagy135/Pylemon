@@ -109,25 +109,11 @@ class Pylemon(object):
             with open('/tmp/refresh', 'w') as t:
                 t.write('')
             return
-        if target == 'date':
-            self.states['date'] = False
-        elif target == 'brightness':
-            self.states['brightness'] = False
-        elif target == 'redshift':
-            self.states['redshift'] = False
-        elif target == 'music':
-            self.states['music'] = False
-        elif target == 'layout':
-            self.states['layout'] = False
-        elif target == 'workspaces':
-            self.states['workspaces'] = False
-        elif target == 'cpu':
-            self.states['cpu'] = False
-        elif target == 'volume':
-            self.states['volume'] = False
-        elif target == 'torrent':
-            self.states['torrent'] = False
+
+        if target in self.states:
+            self.states[target] = False
         self.refresh()
+
     def refresh_timer(self, *args, **kwargs):
         for key in self.states:
             self.states[key] = False
